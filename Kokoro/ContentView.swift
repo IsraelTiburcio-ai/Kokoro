@@ -10,12 +10,29 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: "heart")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("kokoro!")
+            TabView {
+                Tab("Meditación", systemImage: "apple.meditate") {
+                    MeditationHubView()
+                }
+
+                
+                
+                Tab("Juegos", systemImage: "gamecontroller.circle") {
+                    JuegosView()
+                }
+                
+                
+                Tab("Logros y metas", systemImage: "checkmark.seal.text.page.fill") {
+                    LogrosViews()
+                }   
+                
+                Tab("Personas cercanas", systemImage: "person") {
+                    EmergencyContactsView()
+                    
+                }
+            }
+
         }
-        .padding()
     }
 }
 

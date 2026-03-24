@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		86FA89302F71BCB500A665CD /* Kokoro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kokoro.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		86FA893D2F71BCB600A665CD /* KokoroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KokoroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		86FA89472F71BCB600A665CD /* KokoroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KokoroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		86FA89302F71BCB500A665CD /* Apapacho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Apapacho.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86FA893D2F71BCB600A665CD /* ApapachoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApapachoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		86FA89472F71BCB600A665CD /* ApapachoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApapachoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,9 +85,9 @@
 		86FA89312F71BCB500A665CD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				86FA89302F71BCB500A665CD /* Kokoro.app */,
-				86FA893D2F71BCB600A665CD /* KokoroTests.xctest */,
-				86FA89472F71BCB600A665CD /* KokoroUITests.xctest */,
+				86FA89302F71BCB500A665CD /* Apapacho.app */,
+				86FA893D2F71BCB600A665CD /* ApapachoTests.xctest */,
+				86FA89472F71BCB600A665CD /* ApapachoUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		86FA892F2F71BCB500A665CD /* Kokoro */ = {
+		86FA892F2F71BCB500A665CD /* Apapacho */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 86FA89512F71BCB600A665CD /* Build configuration list for PBXNativeTarget "Kokoro" */;
+			buildConfigurationList = 86FA89512F71BCB600A665CD /* Build configuration list for PBXNativeTarget "Apapacho" */;
 			buildPhases = (
 				86FA892C2F71BCB500A665CD /* Sources */,
 				86FA892D2F71BCB500A665CD /* Frameworks */,
@@ -110,16 +110,16 @@
 			fileSystemSynchronizedGroups = (
 				86FA89322F71BCB500A665CD /* Kokoro */,
 			);
-			name = Kokoro;
+			name = Apapacho;
 			packageProductDependencies = (
 			);
 			productName = Kokoro;
-			productReference = 86FA89302F71BCB500A665CD /* Kokoro.app */;
+			productReference = 86FA89302F71BCB500A665CD /* Apapacho.app */;
 			productType = "com.apple.product-type.application";
 		};
-		86FA893C2F71BCB600A665CD /* KokoroTests */ = {
+		86FA893C2F71BCB600A665CD /* ApapachoTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 86FA89542F71BCB600A665CD /* Build configuration list for PBXNativeTarget "KokoroTests" */;
+			buildConfigurationList = 86FA89542F71BCB600A665CD /* Build configuration list for PBXNativeTarget "ApapachoTests" */;
 			buildPhases = (
 				86FA89392F71BCB600A665CD /* Sources */,
 				86FA893A2F71BCB600A665CD /* Frameworks */,
@@ -133,16 +133,16 @@
 			fileSystemSynchronizedGroups = (
 				86FA89402F71BCB600A665CD /* KokoroTests */,
 			);
-			name = KokoroTests;
+			name = ApapachoTests;
 			packageProductDependencies = (
 			);
 			productName = KokoroTests;
-			productReference = 86FA893D2F71BCB600A665CD /* KokoroTests.xctest */;
+			productReference = 86FA893D2F71BCB600A665CD /* ApapachoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		86FA89462F71BCB600A665CD /* KokoroUITests */ = {
+		86FA89462F71BCB600A665CD /* ApapachoUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 86FA89572F71BCB600A665CD /* Build configuration list for PBXNativeTarget "KokoroUITests" */;
+			buildConfigurationList = 86FA89572F71BCB600A665CD /* Build configuration list for PBXNativeTarget "ApapachoUITests" */;
 			buildPhases = (
 				86FA89432F71BCB600A665CD /* Sources */,
 				86FA89442F71BCB600A665CD /* Frameworks */,
@@ -156,11 +156,11 @@
 			fileSystemSynchronizedGroups = (
 				86FA894A2F71BCB600A665CD /* KokoroUITests */,
 			);
-			name = KokoroUITests;
+			name = ApapachoUITests;
 			packageProductDependencies = (
 			);
 			productName = KokoroUITests;
-			productReference = 86FA89472F71BCB600A665CD /* KokoroUITests.xctest */;
+			productReference = 86FA89472F71BCB600A665CD /* ApapachoUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 86FA892B2F71BCB500A665CD /* Build configuration list for PBXProject "Kokoro" */;
+			buildConfigurationList = 86FA892B2F71BCB500A665CD /* Build configuration list for PBXProject "Apapacho" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				86FA892F2F71BCB500A665CD /* Kokoro */,
-				86FA893C2F71BCB600A665CD /* KokoroTests */,
-				86FA89462F71BCB600A665CD /* KokoroUITests */,
+				86FA892F2F71BCB500A665CD /* Apapacho */,
+				86FA893C2F71BCB600A665CD /* ApapachoTests */,
+				86FA89462F71BCB600A665CD /* ApapachoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		86FA893F2F71BCB600A665CD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 86FA892F2F71BCB500A665CD /* Kokoro */;
+			target = 86FA892F2F71BCB500A665CD /* Apapacho */;
 			targetProxy = 86FA893E2F71BCB600A665CD /* PBXContainerItemProxy */;
 		};
 		86FA89492F71BCB600A665CD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 86FA892F2F71BCB500A665CD /* Kokoro */;
+			target = 86FA892F2F71BCB500A665CD /* Apapacho */;
 			targetProxy = 86FA89482F71BCB600A665CD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -398,7 +398,7 @@
 				DEVELOPMENT_TEAM = PV7HK6JW2Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_GROQ_API_KEY = "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";
+				INFOPLIST_KEY_GROQ_API_KEY = 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;
 				INFOPLIST_KEY_NSContactsUsageDescription = "Necesitamos acceso a tus contactos para que puedas elegir personas de apoyo y agregarlas a tu red de emergencia.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -433,7 +433,7 @@
 				DEVELOPMENT_TEAM = PV7HK6JW2Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_GROQ_API_KEY = "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";
+				INFOPLIST_KEY_GROQ_API_KEY = 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;
 				INFOPLIST_KEY_NSContactsUsageDescription = "Necesitamos acceso a tus contactos para que puedas elegir personas de apoyo y agregarlas a tu red de emergencia.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -475,7 +475,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kokoro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kokoro";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Apapacho.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Apapacho";
 			};
 			name = Debug;
 		};
@@ -496,7 +496,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kokoro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kokoro";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Apapacho.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Apapacho";
 			};
 			name = Release;
 		};
@@ -541,7 +541,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		86FA892B2F71BCB500A665CD /* Build configuration list for PBXProject "Kokoro" */ = {
+		86FA892B2F71BCB500A665CD /* Build configuration list for PBXProject "Apapacho" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				86FA894F2F71BCB600A665CD /* Debug */,
@@ -550,7 +550,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		86FA89512F71BCB600A665CD /* Build configuration list for PBXNativeTarget "Kokoro" */ = {
+		86FA89512F71BCB600A665CD /* Build configuration list for PBXNativeTarget "Apapacho" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				86FA89522F71BCB600A665CD /* Debug */,
@@ -559,7 +559,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		86FA89542F71BCB600A665CD /* Build configuration list for PBXNativeTarget "KokoroTests" */ = {
+		86FA89542F71BCB600A665CD /* Build configuration list for PBXNativeTarget "ApapachoTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				86FA89552F71BCB600A665CD /* Debug */,
@@ -568,7 +568,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		86FA89572F71BCB600A665CD /* Build configuration list for PBXNativeTarget "KokoroUITests" */ = {
+		86FA89572F71BCB600A665CD /* Build configuration list for PBXNativeTarget "ApapachoUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				86FA89582F71BCB600A665CD /* Debug */,
