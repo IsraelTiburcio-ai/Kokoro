@@ -18,7 +18,7 @@ struct ContentView: View {
                 
                 
                 Tab("Juegos", systemImage: "gamecontroller.circle") {
-                    JuegosView()
+                    GamesMenuView()
                 }
                 
                 

@@ -531,6 +531,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_GROQ_API_KEY = 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;
 				INFOPLIST_KEY_NSContactsUsageDescription = "Necesitamos acceso a tus contactos para que puedas elegir personas de apoyo y agregarlas a tu red de emergencia.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Necesitamos acceso a tu galeria para que puedas elegir una foto como avatar de apoyo.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -567,6 +568,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_GROQ_API_KEY = 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;
 				INFOPLIST_KEY_NSContactsUsageDescription = "Necesitamos acceso a tus contactos para que puedas elegir personas de apoyo y agregarlas a tu red de emergencia.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Necesitamos acceso a tu galeria para que puedas elegir una foto como avatar de apoyo.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

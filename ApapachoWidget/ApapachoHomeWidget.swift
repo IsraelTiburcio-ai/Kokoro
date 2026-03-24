@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import UIKit
 
 struct ApapachoHomeEntry: TimelineEntry {
     let date: Date
@@ -18,6 +19,7 @@ struct ApapachoHomeProvider: TimelineProvider {
                     ApapachoWidgetGoal(id: UUID(), title: "Caminar", detail: "15 min", isCompleted: false),
                     ApapachoWidgetGoal(id: UUID(), title: "Escribir diario", detail: "3 lineas", isCompleted: false)
                 ],
+                companionRawValue: ApapachoCompanion.none.rawValue,
                 updatedAt: .now
             )
         )
@@ -53,9 +55,10 @@ struct ApapachoHomeWidgetView: View {
     private var background: some View {
         LinearGradient(
             colors: [
-                Color(red: 0.95, green: 0.89, blue: 0.84),
-                Color(red: 0.89, green: 0.93, blue: 0.98),
-                Color(red: 0.92, green: 0.97, blue: 0.92)
+                Color.purple.opacity(0.10),
+                Color.blue.opacity(0.08),
+                Color.white.opacity(0.04),
+                Color.mint.opacity(0.05)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -68,35 +71,61 @@ struct ApapachoHomeWidgetView: View {
 
     private var smallBody: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Tu dia")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .foregroundStyle(.primary)
+            HStack(spacing: 8) {
+                Text("Retos y metas")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
+
+                Spacer(minLength: 0)
+
+                companionAvatar(size: 28)
+            }
 
             if entry.payload.challengeTitle == ApapachoWidgetPayload.empty.challengeTitle,
                entry.payload.goals.isEmpty {
-                Text("Sin datos por ahora")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Sin datos por ahora")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
 
-                Text("Abre Apapacho")
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    Text("Abre Apapacho")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(10)
+                .background(Color.white.opacity(0.16))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             } else {
                 Text("Reto")
                     .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color(red: 0.74, green: 0.41, blue: 0.20))
+                    .foregroundStyle(Color.purple)
 
                 Text(entry.payload.challengeTitle)
                     .font(.system(size: 13, weight: .bold, design: .rounded))
                     .foregroundStyle(.primary)
                     .lineLimit(3)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.purple.opacity(0.12), Color.blue.opacity(0.10), Color.white.opacity(0.12)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
                 Spacer(minLength: 0)
 
                 Text("Progreso: \(progressText)")
                     .font(.system(size: 10, weight: .semibold, design: .rounded))
                     .foregroundStyle(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(Color.white.opacity(0.18))
+                    .clipShape(Capsule(style: .continuous))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -105,9 +134,15 @@ struct ApapachoHomeWidgetView: View {
     private var mediumBody: some View {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Reto del dia")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color(red: 0.74, green: 0.41, blue: 0.20))
+                HStack(spacing: 8) {
+                    Text("Reto del dia")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.purple)
+
+                    Spacer(minLength: 0)
+
+                    companionAvatar(size: 30)
+                }
 
                 if entry.payload.challengeTitle == ApapachoWidgetPayload.empty.challengeTitle,
                    entry.payload.goals.isEmpty {
@@ -135,8 +170,18 @@ struct ApapachoHomeWidgetView: View {
                 Spacer(minLength: 0)
             }
             .padding(10)
-            .background(Color.white.opacity(0.42))
+            .background(
+                LinearGradient(
+                    colors: [Color.purple.opacity(0.12), Color.blue.opacity(0.10), Color.white.opacity(0.14)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color.white.opacity(0.16), lineWidth: 1)
+            }
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Metas")
@@ -158,7 +203,7 @@ struct ApapachoHomeWidgetView: View {
                         ForEach(Array(entry.payload.pendingGoals.prefix(3))) { goal in
                             HStack(alignment: .top, spacing: 5) {
                                 Circle()
-                                    .fill(Color(red: 0.20, green: 0.63, blue: 0.57))
+                                    .fill(Color.blue)
                                     .frame(width: 5, height: 5)
                                     .padding(.top, 5)
 
@@ -174,8 +219,39 @@ struct ApapachoHomeWidgetView: View {
                 Spacer(minLength: 0)
             }
             .padding(10)
-            .background(Color.white.opacity(0.35))
+            .background(Color.white.opacity(0.14))
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func companionAvatar(size: CGFloat) -> some View {
+        if entry.payload.companion == .custom,
+           let data = ApapachoCompanionImageStore.loadCustomAvatarData(),
+           let image = UIImage(data: data) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
+                .overlay {
+                    Circle()
+                        .stroke(Color.white.opacity(0.42), lineWidth: 1)
+                }
+        } else if let assetName = entry.payload.companion.assetName {
+            Image(assetName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
+                .overlay {
+                    Circle()
+                        .stroke(Color.white.opacity(0.42), lineWidth: 1)
+                }
         }
     }
 }
@@ -205,6 +281,7 @@ struct ApapachoHomeWidget: Widget {
                 ApapachoWidgetGoal(id: UUID(), title: "Tomar agua", detail: "8 vasos", isCompleted: true),
                 ApapachoWidgetGoal(id: UUID(), title: "Caminar", detail: "15 min", isCompleted: false)
             ],
+            companionRawValue: ApapachoCompanion.grandma.rawValue,
             updatedAt: .now
         )
     )
@@ -223,6 +300,7 @@ struct ApapachoHomeWidget: Widget {
                 ApapachoWidgetGoal(id: UUID(), title: "Caminar", detail: "15 min", isCompleted: false),
                 ApapachoWidgetGoal(id: UUID(), title: "Escribir diario", detail: "3 lineas", isCompleted: false)
             ],
+            companionRawValue: ApapachoCompanion.grandpa.rawValue,
             updatedAt: .now
         )
     )

@@ -3,6 +3,8 @@ import SwiftData
 
 @main
 struct TuApp: App {
+    @State private var showSplashIntro = true
+
     private let sharedModelContainer: ModelContainer = {
         let schema = Schema([
             ChallengeEntry.self,
@@ -30,7 +32,21 @@ struct TuApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ZStack {
+                ContentView()
+                    .opacity(showSplashIntro ? 0.001 : 1)
+                    .scaleEffect(showSplashIntro ? 1.02 : 1)
+
+                if showSplashIntro {
+                    SplashIntroView {
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showSplashIntro = false
+                        }
+                    }
+                    .transition(.opacity.combined(with: .scale(scale: 1.02)))
+                }
+            }
+            .animation(.easeInOut(duration: 0.45), value: showSplashIntro)
         }
         .modelContainer(sharedModelContainer)
     }

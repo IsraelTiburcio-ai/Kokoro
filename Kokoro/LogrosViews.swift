@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 import LinkPresentation
 import UIKit
 import Combine
@@ -195,6 +196,7 @@ struct LogrosViews: View {
     @AppStorage("lastPlayedAuthor") private var lastPlayedAuthor: String = ""
     @AppStorage("lastPlayedEstimatedSeconds") private var lastPlayedEstimatedSeconds: Double = 0
     @AppStorage("lastPlayedURL") private var lastPlayedURL: String = ""
+    @AppStorage("selectedEmotiveCompanion") private var selectedEmotiveCompanionRawValue: String = ApapachoCompanion.none.rawValue
 
     @StateObject private var lastMediaPreviewStore = LastMediaPreviewStore()
 
@@ -213,6 +215,9 @@ struct LogrosViews: View {
 
     @State private var isGeneratingInsight = false
     @State private var insightError: String?
+    @State private var selectedCompanionPhotoItem: PhotosPickerItem?
+    @State private var showCompanionPhotoPicker = false
+    @State private var companionCustomPreviewImage: UIImage?
 
     @State private var feedbackToken = 0
 
@@ -277,12 +282,21 @@ struct LogrosViews: View {
         } message: {
             Text(insightError ?? "")
         }
+        .photosPicker(isPresented: $showCompanionPhotoPicker, selection: $selectedCompanionPhotoItem, matching: .images)
         .onAppear {
             lastMediaPreviewStore.fetchIfNeeded(urlString: lastPlayedURL)
+            companionCustomPreviewImage = loadStoredCustomCompanionPreview()
             syncHomeWidgetData()
         }
         .onChange(of: lastPlayedURL) { _, newValue in
             lastMediaPreviewStore.fetchIfNeeded(urlString: newValue)
+        }
+        .onChange(of: selectedCompanionPhotoItem) { _, newValue in
+            guard let newValue else { return }
+
+            Task {
+                await importCustomCompanionImage(from: newValue)
+            }
         }
     }
 }
@@ -504,6 +518,36 @@ private extension LogrosViews {
 // MARK: - RETOS
 
 private extension LogrosViews {
+    var selectedEmotiveCompanion: ApapachoCompanion {
+        ApapachoCompanion(rawValue: selectedEmotiveCompanionRawValue) ?? .none
+    }
+
+    @ViewBuilder
+    func companionAvatar(size: CGFloat) -> some View {
+        if selectedEmotiveCompanion == .custom,
+           let image = companionCustomPreviewImage ?? loadStoredCustomCompanionPreview() {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
+                .overlay {
+                    Circle()
+                        .stroke(Color.white.opacity(0.45), lineWidth: 1)
+                }
+        } else if let assetName = selectedEmotiveCompanion.assetName {
+            Image(assetName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
+                .overlay {
+                    Circle()
+                        .stroke(Color.white.opacity(0.45), lineWidth: 1)
+                }
+        }
+    }
+
     var challengesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -618,6 +662,76 @@ private extension LogrosViews {
                 Text("\(todayEntries.count) completados")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(.secondary)
+            }
+
+            HStack(spacing: 12) {
+                companionAvatar(size: 44)
+
+                Menu {
+                    Button {
+                        selectedEmotiveCompanionRawValue = ApapachoCompanion.grandma.rawValue
+                        syncHomeWidgetData()
+                    } label: {
+                        if selectedEmotiveCompanion == .grandma {
+                            Label(ApapachoCompanion.grandma.displayName, systemImage: "checkmark")
+                        } else {
+                            Text(ApapachoCompanion.grandma.displayName)
+                        }
+                    }
+
+                    Button {
+                        selectedEmotiveCompanionRawValue = ApapachoCompanion.grandpa.rawValue
+                        syncHomeWidgetData()
+                    } label: {
+                        if selectedEmotiveCompanion == .grandpa {
+                            Label(ApapachoCompanion.grandpa.displayName, systemImage: "checkmark")
+                        } else {
+                            Text(ApapachoCompanion.grandpa.displayName)
+                        }
+                    }
+
+                    Button {
+                        selectedEmotiveCompanionRawValue = ApapachoCompanion.none.rawValue
+                        syncHomeWidgetData()
+                    } label: {
+                        if selectedEmotiveCompanion == .none {
+                            Label(ApapachoCompanion.none.displayName, systemImage: "checkmark")
+                        } else {
+                            Text(ApapachoCompanion.none.displayName)
+                        }
+                    }
+
+                    Divider()
+
+                    Button {
+                        showCompanionPhotoPicker = true
+                    } label: {
+                        if selectedEmotiveCompanion == .custom {
+                            Label(ApapachoCompanion.custom.displayName, systemImage: "checkmark")
+                        } else {
+                            Text(ApapachoCompanion.custom.displayName)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "person.crop.circle.badge.heart")
+                            .font(.system(size: 13, weight: .semibold))
+
+                        Text("Acompañante: \(selectedEmotiveCompanion.displayName)")
+                            .lineLimit(1)
+
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.white.opacity(0.52))
+                    .clipShape(Capsule(style: .continuous))
+                }
+
+                Spacer(minLength: 0)
             }
 
             Text(challenge)
@@ -1221,11 +1335,52 @@ private extension LogrosViews {
             challengeTitle: challenge,
             challengeSubtitle: subtitle,
             goals: mappedGoals,
+            companionRawValue: selectedEmotiveCompanion.rawValue,
             updatedAt: .now
         )
 
         ApapachoWidgetSharedStore.save(payload)
         WidgetCenter.shared.reloadTimelines(ofKind: "ApapachoDailyWidget")
+    }
+
+    func loadStoredCustomCompanionPreview() -> UIImage? {
+        guard let data = ApapachoCompanionImageStore.loadCustomAvatarData() else { return nil }
+        return UIImage(data: data)
+    }
+
+    func importCustomCompanionImage(from item: PhotosPickerItem) async {
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self),
+                  let normalizedData = normalizedAvatarData(from: data) else {
+                return
+            }
+
+            guard ApapachoCompanionImageStore.saveCustomAvatarData(normalizedData) else { return }
+
+            await MainActor.run {
+                companionCustomPreviewImage = UIImage(data: normalizedData)
+                selectedEmotiveCompanionRawValue = ApapachoCompanion.custom.rawValue
+                syncHomeWidgetData()
+            }
+        } catch {
+            // Keep selection unchanged if import fails.
+        }
+    }
+
+    func normalizedAvatarData(from data: Data) -> Data? {
+        guard let image = UIImage(data: data) else { return nil }
+
+        let maxDimension: CGFloat = 900
+        let maxSide = max(image.size.width, image.size.height)
+        let scale = maxSide > maxDimension ? maxDimension / maxSide : 1
+        let targetSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        let rendered = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+
+        return rendered.jpegData(compressionQuality: 0.82)
     }
 
     @discardableResult

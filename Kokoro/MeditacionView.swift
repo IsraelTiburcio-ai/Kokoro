@@ -725,7 +725,7 @@ private struct DailyZenBanner: View {
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.88))
 
-                Text("La meditation no es solo para relajarse, sino también para mejorar la concentración y aumentar la creatividad.")
+                Text("La meditación no es sólo para relajarse, sino también para mejorar la concentración y aumentar la creatividad.")
                     .font(.system(size: 15, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .fixedSize(horizontal: false, vertical: true)
@@ -760,8 +760,6 @@ private struct FeaturedMeditationCard: View {
     let isCompleted: Bool
     let isSelected: Bool
     let action: () -> Void
-
-    @State private var isPressed = false
 
     private var displayTitle: String {
         preview?.title?.trimmedNonEmpty ?? item.title
@@ -855,19 +853,10 @@ private struct FeaturedMeditationCard: View {
                     .stroke(isSelected ? item.accentColor.opacity(0.45) : .clear, lineWidth: 1.4)
             }
             .shadow(color: .black.opacity(0.05), radius: 14, x: 0, y: 8)
-            .scaleEffect(isPressed ? 0.985 : 1)
-            .animation(.spring(response: 0.22, dampingFraction: 0.78), value: isPressed)
+            .scaleEffect(isSelected ? 0.992 : 1)
+            .animation(.spring(response: 0.22, dampingFraction: 0.78), value: isSelected)
         }
         .buttonStyle(.plain)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    if !isPressed { isPressed = true }
-                }
-                .onEnded { _ in
-                    isPressed = false
-                }
-        )
     }
 }
 
@@ -878,8 +867,6 @@ private struct CompactMediaCard: View {
     let estimatedListenText: String?
     let isCompleted: Bool
     let action: () -> Void
-
-    @State private var isPressed = false
 
     private var displayTitle: String {
         preview?.title?.trimmedNonEmpty ?? item.title
@@ -950,19 +937,8 @@ private struct CompactMediaCard: View {
                     }
             )
             .shadow(color: .black.opacity(0.04), radius: 10, x: 0, y: 6)
-            .scaleEffect(isPressed ? 0.986 : 1)
-            .animation(.spring(response: 0.22, dampingFraction: 0.80), value: isPressed)
         }
         .buttonStyle(.plain)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    if !isPressed { isPressed = true }
-                }
-                .onEnded { _ in
-                    isPressed = false
-                }
-        )
     }
 }
 
