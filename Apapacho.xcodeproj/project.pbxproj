@@ -398,7 +398,7 @@
 				DEVELOPMENT_TEAM = PV7HK6JW2Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_GROQ_API_KEY = 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;
+				INFOPLIST_KEY_GROQ_API_KEY = "";
 				INFOPLIST_KEY_NSContactsUsageDescription = "Necesitamos acceso a tus contactos para que puedas elegir personas de apoyo y agregarlas a tu red de emergencia.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -433,7 +433,7 @@
 				DEVELOPMENT_TEAM = PV7HK6JW2Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_GROQ_API_KEY = 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;
+				INFOPLIST_KEY_GROQ_API_KEY = "";
 				INFOPLIST_KEY_NSContactsUsageDescription = "Necesitamos acceso a tus contactos para que puedas elegir personas de apoyo y agregarlas a tu red de emergencia.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

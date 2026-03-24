@@ -1236,7 +1236,7 @@ private extension LogrosViews {
         }
 
         // Fallback temporal para no bloquear pruebas en dispositivo mientras se estabiliza Info.plist.
-        return "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".trimmedNonEmpty
+        return "".trimmedNonEmpty
     }
 
     func generateInsight() async {
