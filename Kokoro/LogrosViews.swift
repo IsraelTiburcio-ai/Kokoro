@@ -3,6 +3,7 @@ import SwiftData
 import LinkPresentation
 import UIKit
 import Combine
+import WidgetKit
 
 // MARK: - MODELOS
 
@@ -278,6 +279,7 @@ struct LogrosViews: View {
         }
         .onAppear {
             lastMediaPreviewStore.fetchIfNeeded(urlString: lastPlayedURL)
+            syncHomeWidgetData()
         }
         .onChange(of: lastPlayedURL) { _, newValue in
             lastMediaPreviewStore.fetchIfNeeded(urlString: newValue)
@@ -1144,6 +1146,7 @@ private extension LogrosViews {
         feedbackToken += 1
         resetChallengeDraft()
         showAddChallengeSheet = false
+        syncHomeWidgetData()
     }
 
     func resetChallengeDraft() {
@@ -1155,6 +1158,7 @@ private extension LogrosViews {
     func deleteChallenge(_ entry: ChallengeEntry) {
         context.delete(entry)
         _ = persistChanges(action: "deleteChallenge")
+        syncHomeWidgetData()
     }
 
     func saveGoal() {
@@ -1172,6 +1176,7 @@ private extension LogrosViews {
         feedbackToken += 1
         resetGoalDraft()
         showAddGoalSheet = false
+        syncHomeWidgetData()
     }
 
     func resetGoalDraft() {
@@ -1188,11 +1193,39 @@ private extension LogrosViews {
 
         _ = persistChanges(action: "toggleGoal")
         feedbackToken += 1
+        syncHomeWidgetData()
     }
 
     func deleteGoal(_ goal: GoalItem) {
         context.delete(goal)
         _ = persistChanges(action: "deleteGoal")
+        syncHomeWidgetData()
+    }
+
+    func syncHomeWidgetData() {
+        let challenge = currentDailyChallenge ?? "Sin reto por ahora"
+        let subtitle = "Abre Apapacho para registrar tu avance emocional de hoy."
+
+        let mappedGoals = goals
+            .sorted { $0.targetDate < $1.targetDate }
+            .map {
+                ApapachoWidgetGoal(
+                    id: $0.id,
+                    title: $0.title,
+                    detail: $0.detail,
+                    isCompleted: $0.isCompleted
+                )
+            }
+
+        let payload = ApapachoWidgetPayload(
+            challengeTitle: challenge,
+            challengeSubtitle: subtitle,
+            goals: mappedGoals,
+            updatedAt: .now
+        )
+
+        ApapachoWidgetSharedStore.save(payload)
+        WidgetCenter.shared.reloadTimelines(ofKind: "ApapachoDailyWidget")
     }
 
     @discardableResult
@@ -1231,15 +1264,32 @@ private extension LogrosViews {
 
 private extension LogrosViews {
     var groqAPIKey: String? {
-        if let keyFromPlist = (Bundle.main.object(forInfoDictionaryKey: "GROQ_API_KEY") as? String)?.trimmedNonEmpty {
-            return keyFromPlist
+        let plistKeys = ["GROQ_API_KEY", "GROQ_api_key", "groq_api_key"]
+        for keyName in plistKeys {
+            if let keyFromPlist = (Bundle.main.object(forInfoDictionaryKey: keyName) as? String)?.trimmedNonEmpty {
+                return keyFromPlist
+            }
         }
 
-        if let keyFromEnvironment = ProcessInfo.processInfo.environment["GROQ_API_KEY"]?.trimmedNonEmpty {
-            return keyFromEnvironment
+        let envKeys = ["GROQ_API_KEY", "GROQ_api_key", "groq_api_key"]
+        for keyName in envKeys {
+            if let keyFromEnvironment = ProcessInfo.processInfo.environment[keyName]?.trimmedNonEmpty {
+                return keyFromEnvironment
+            }
         }
 
         #if DEBUG
+        for keyName in envKeys {
+            if let keyFromDotEnv = loadDotEnvValue(for: keyName) {
+                return keyFromDotEnv
+            }
+        }
+
+        // Local fallback to avoid blocking device tests when plist/env loading differs.
+        if let debugFallback = "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".trimmedNonEmpty {
+            return debugFallback
+        }
+
         if let keyFromDotEnv = loadDotEnvValue(for: "GROQ_API_KEY") {
             return keyFromDotEnv
         }
