@@ -1235,15 +1235,55 @@ private extension LogrosViews {
             return keyFromPlist
         }
 
-        // Fallback temporal para no bloquear pruebas en dispositivo mientras se estabiliza Info.plist.
-        return "".trimmedNonEmpty
+        if let keyFromEnvironment = ProcessInfo.processInfo.environment["GROQ_API_KEY"]?.trimmedNonEmpty {
+            return keyFromEnvironment
+        }
+
+        #if DEBUG
+        if let keyFromDotEnv = loadDotEnvValue(for: "GROQ_API_KEY") {
+            return keyFromDotEnv
+        }
+        #endif
+
+        return nil
     }
+
+    #if DEBUG
+    func loadDotEnvValue(for key: String) -> String? {
+        // Resolve the repo root from this source file path during local development.
+        let sourceFolder = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+        let repoRoot = sourceFolder.deletingLastPathComponent()
+        let dotEnvURL = repoRoot.appendingPathComponent(".env")
+
+        guard let fileContents = try? String(contentsOf: dotEnvURL, encoding: .utf8) else {
+            return nil
+        }
+
+        for rawLine in fileContents.components(separatedBy: .newlines) {
+            let line = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            if line.isEmpty || line.hasPrefix("#") {
+                continue
+            }
+
+            let components = line.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+            guard components.count == 2 else { continue }
+
+            let currentKey = String(components[0]).trimmingCharacters(in: .whitespacesAndNewlines)
+            guard currentKey == key else { continue }
+
+            return String(components[1]).trimmingCharacters(in: .whitespacesAndNewlines).trimmedNonEmpty
+        }
+
+        return nil
+    }
+    #endif
 
     func generateInsight() async {
         guard !todayEntries.isEmpty else { return }
 
         guard let apiKey = groqAPIKey else {
-            insightError = "No encontré tu GROQ_API_KEY en Info.plist."
+            insightError = "No encontré GROQ_API_KEY. Revisa Info.plist, variables de entorno o .env local."
             return
         }
 
