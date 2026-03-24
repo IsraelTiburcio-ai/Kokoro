@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import CryptoKit
 import LinkPresentation
 import UIKit
 import Combine
@@ -53,7 +54,7 @@ struct MediaItem: Identifiable, Hashable {
     let accentHex: String
 
     init(
-        id: UUID = UUID(),
+        id: UUID? = nil,
         title: String,
         subtitle: String,
         author: String,
@@ -64,7 +65,7 @@ struct MediaItem: Identifiable, Hashable {
         imageSystemName: String,
         accentHex: String
     ) {
-        self.id = id
+        self.id = id ?? Self.deterministicID(from: link)
         self.title = title
         self.subtitle = subtitle
         self.author = author
@@ -78,6 +79,25 @@ struct MediaItem: Identifiable, Hashable {
 
     var accentColor: Color {
         Color(hex: accentHex)
+    }
+
+    // Stable IDs ensure progress records keep matching after app relaunches.
+    private static func deterministicID(from seed: String) -> UUID {
+        let digest = SHA256.hash(data: Data(seed.utf8))
+        var bytes = Array(digest.prefix(16))
+
+        // Set UUID version/variant bits to produce a standards-compliant UUID.
+        bytes[6] = (bytes[6] & 0x0F) | 0x40
+        bytes[8] = (bytes[8] & 0x3F) | 0x80
+
+        let tuple: uuid_t = (
+            bytes[0], bytes[1], bytes[2], bytes[3],
+            bytes[4], bytes[5], bytes[6], bytes[7],
+            bytes[8], bytes[9], bytes[10], bytes[11],
+            bytes[12], bytes[13], bytes[14], bytes[15]
+        )
+
+        return UUID(uuid: tuple)
     }
 }
 
@@ -197,6 +217,7 @@ struct MeditationHubView: View {
     @State private var selectedID: UUID?
     @State private var appeared = false
     @State private var currentSession: PlaybackSession?
+    @State private var showResetProgressAlert = false
 
     private let featuredMeditations: [MediaItem] = [
         .init(
@@ -371,12 +392,21 @@ struct MeditationHubView: View {
         .animation(.spring(response: 0.55, dampingFraction: 0.86), value: continueWatchingItems.count)
         .onAppear {
             appeared = true
+            migrateLegacyProgressIDsIfNeeded()
             allItems.forEach { previewStore.fetchIfNeeded(for: $0) }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 finalizeExternalPlaybackSession()
             }
+        }
+        .alert("¿Resetear progreso de meditación?", isPresented: $showResetProgressAlert) {
+            Button("Cancelar", role: .cancel) {}
+            Button("Resetear", role: .destructive) {
+                resetMeditationProgress()
+            }
+        } message: {
+            Text("Se borrará tu progreso guardado y el último contenido reproducido.")
         }
     }
 }
@@ -424,6 +454,26 @@ private extension MeditationHubView {
             }
 
             DailyZenBanner()
+
+            Button {
+                showResetProgressAlert = true
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.counterclockwise.circle.fill")
+                    Text("Resetear progreso")
+                }
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(.white.opacity(0.56))
+                .clipShape(Capsule(style: .continuous))
+                .overlay {
+                    Capsule(style: .continuous)
+                        .stroke(Color.white.opacity(0.45), lineWidth: 1)
+                }
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -485,6 +535,28 @@ private extension MeditationHubView {
         progressRecords.first(where: { $0.mediaID == item.id })
     }
 
+    func migrateLegacyProgressIDsIfNeeded() {
+        var migratedCount = 0
+
+        for item in allItems {
+            guard record(for: item) == nil else { continue }
+
+            let normalizedCurrentTitle = normalizeTitle(item.title)
+            guard let legacy = progressRecords.first(where: {
+                $0.source == item.platform.rawValue && normalizeTitle($0.title) == normalizedCurrentTitle
+            }) else {
+                continue
+            }
+
+            legacy.mediaID = item.id
+            migratedCount += 1
+        }
+
+        if migratedCount > 0 {
+            _ = persistChanges(action: "migrateLegacyProgressIDs")
+        }
+    }
+
     func progressValue(for item: MediaItem) -> Double {
         record(for: item)?.progress ?? 0
     }
@@ -513,6 +585,23 @@ private extension MeditationHubView {
 
         guard let url = URL(string: item.link) else { return }
         openURL(url)
+    }
+
+    func resetMeditationProgress() {
+        currentSession = nil
+        selectedID = nil
+
+        for record in progressRecords {
+            modelContext.delete(record)
+        }
+
+        lastPlayedTitle = ""
+        lastPlayedSource = ""
+        lastPlayedKind = ""
+        lastPlayedAuthor = ""
+        lastPlayedEstimatedSeconds = 0
+
+        _ = persistChanges(action: "resetMeditationProgress")
     }
 
     func markOpened(_ item: MediaItem) {
@@ -629,6 +718,13 @@ private extension MeditationHubView {
         }
 
         return "\(remainingSeconds)s"
+    }
+
+    func normalizeTitle(_ title: String) -> String {
+        title
+            .folding(options: .diacriticInsensitive, locale: .current)
+            .lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
